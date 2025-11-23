@@ -1,17 +1,15 @@
 import { rcp } from '@kit.RemoteCommunicationKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { Books } from '../components/Books';
-import { ArcList, ArcListItem, ArcListAttribute, ArcListItemAttribute, router } from '@kit.ArkUI';
+import { ArcList, ArcListItem, ArcListAttribute, ArcListItemAttribute } from '@kit.ArkUI';
 
-@Entry
 @Component
-struct GetRequestContent {
-
+export struct GetRequestContent {
   @State content: string = '';
   @State breeds: Books[] = [];
   @State currentIndex: number = 1;
   @State message: string = '';
-
+  @Consume('NavPathStack') pageStack: NavPathStack;
   private scroller: Scroller = new Scroller();
 
   async aboutToAppear() {
@@ -26,7 +24,7 @@ struct GetRequestContent {
         .height(20)
     }
     .onClick(() => {
-      router.pushUrl({ url: 'pages/PostRequestContent' })
+      this.pageStack.pushPathByName('PostRequestContent', null);
     })
     .padding(8)
   }
@@ -40,64 +38,65 @@ struct GetRequestContent {
     }
     .backgroundColor(Color.Orange)
     .onClick(() => {
-      router.pushUrl({ url: 'pages/DeleteRequestContent' })
+      this.pageStack.pushPathByName('DeleteRequestContent', null);
     })
     .padding(8)
   }
 
   build() {
-    Column() {
-      ArcList({ initialIndex: 0, scroller: this.scroller }) {
-        ForEach(this.breeds, (breed: Books, index: number) => {
-          ArcListItem() {
-            Column() {
-              Text(`User Id: ${breed.userId}`)
-                .fontColor(Color.Black)
-                .fontSize(12)
-                .fontWeight(FontWeight.Bold)
-              Text(`Author Id: ${breed.id}`)
-                .fontColor(Color.Black)
-                .fontSize(12)
-                .fontWeight(FontWeight.Bold)
-              Text(`Description: ${breed.title}`)
-                .fontColor(Color.Black)
-                .fontSize(12)
-                .fontWeight(FontWeight.Bold)
+    NavDestination() {
+      Column() {
+        ArcList({ initialIndex: 0, scroller: this.scroller }) {
+          ForEach(this.breeds, (breed: Books, index: number) => {
+            ArcListItem() {
+              Column() {
+                Text(`User Id: ${breed.userId}`)
+                  .fontColor(Color.Black)
+                  .fontSize(12)
+                  .fontWeight(FontWeight.Bold)
+                Text(`Author Id: ${breed.id}`)
+                  .fontColor(Color.Black)
+                  .fontSize(12)
+                  .fontWeight(FontWeight.Bold)
+                Text(`Description: ${breed.title}`)
+                  .fontColor(Color.Black)
+                  .fontSize(12)
+                  .fontWeight(FontWeight.Bold)
+              }
             }
-          }
-          .backgroundColor('#fff8f1e3')
-          .padding(4)
-          .margin(4)
-          .borderRadius(12)
-          .borderWidth(1)
-          .borderColor('#0A59F7')
-          .width('100%')
-          .swipeAction({
-            start: {
-              builder: () => {
-                this.itemStart()
+            .backgroundColor('#fff8f1e3')
+            .padding(4)
+            .margin(4)
+            .borderRadius(12)
+            .borderWidth(1)
+            .borderColor('#0A59F7')
+            .width('100%')
+            .swipeAction({
+              start: {
+                builder: () => {
+                  this.itemStart()
+                },
               },
-            },
-            end: {
-              builder: () => {
-                this.itemEnd()
-              },
-            }
-          })
-        }, (breed: Books) => breed.id)
+              end: {
+                builder: () => {
+                  this.itemEnd()
+                },
+              }
+            })
+          }, (breed: Books) => breed.id)
+        }
+        .width('100%')
+        .height('100%')
       }
       .width('100%')
-      .height('100%')
+      .backgroundColor(Color.White)
     }
-    .width('100%')
-    .backgroundColor(Color.White)
+    .hideTitleBar(true)
+    .hideBackButton(true)
   }
 
   private getTransferSynEx = async () => {
-
-    const getURL = 'https://' + getContext(this)
-      .resourceManager
-      .getStringSync($r('app.string.serviceurl').id);
+    const getURL = 'https://' + $r('app.string.service_url');
 
     const sessions = rcp.createSession();
     sessions.get(getURL)

@@ -1,33 +1,53 @@
-import { router } from '@kit.ArkUI'
+import { DeleteRequestContent } from './DeleteRequestContent'
+import { GetRequestContent } from './GetRequestContent'
+import { PostRequestContent } from './PostRequestContent'
 
 @Entry
 @Component
 struct MainPage {
+  @Provide('NavPathStack') pageStack: NavPathStack = new NavPathStack()
+
+  @Builder
+  PagesMap(name: string) {
+    if (name === 'DeleteRequestContent') {
+      DeleteRequestContent()
+    } else if (name === 'GetRequestContent') {
+      GetRequestContent()
+    } else if (name === 'PostRequestContent') {
+      PostRequestContent()
+    }
+  }
 
   build() {
-    RelativeContainer() {
-      Column() {
-        this.button('Delete Books', this.deleteRequestContent)
-        this.button('Get Book List', this.getRequestContent)
-        this.button('Add Book', this.postRequestContent)
+    Navigation(this.pageStack) {
+      RelativeContainer() {
+        Column() {
+          this.button('Delete Books', this.deleteRequestContent)
+          this.button('Get Book List', this.getRequestContent)
+          this.button('Add Book', this.postRequestContent)
+        }
+        .alignRules({
+          center: { anchor: '__container__', align: VerticalAlign.Center },
+          middle: { anchor: '__container__', align: HorizontalAlign.Center }
+        })
       }
-      .alignRules({
-        center: { anchor: '__container__', align: VerticalAlign.Center },
-        middle: { anchor: '__container__', align: HorizontalAlign.Center }
-      })
+      .width('100%')
+      .backgroundColor(Color.White)
     }
-    .width('100%')
-    .backgroundColor(Color.White)
+    .hideTitleBar(true)
+    .navDestination(this.PagesMap)
+    .hideBackButton(true)
+    .ignoreLayoutSafeArea()
   }
 
   private deleteRequestContent = () => {
-    router.pushUrl({ url: 'pages/DeleteRequestContent' });
+    this.pageStack.pushPathByName('DeleteRequestContent', null);
   }
   private getRequestContent = () => {
-    router.pushUrl({ url: 'pages/GetRequestContent' });
+    this.pageStack.pushPathByName('GetRequestContent', null);
   }
   private postRequestContent = () => {
-    router.pushUrl({ url: 'pages/PostRequestContent' });
+    this.pageStack.pushPathByName('PostRequestContent', null);
   }
 
   @Builder

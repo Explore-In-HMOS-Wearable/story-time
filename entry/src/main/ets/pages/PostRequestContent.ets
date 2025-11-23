@@ -1,46 +1,50 @@
 import { rcp } from '@kit.RemoteCommunicationKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 
-@Entry
 @Component
-struct PostRequestContent {
+export struct PostRequestContent {
   @State userId: string = '';
   @State ids: string = '';
   @State title: string = '';
   @State completed: string = '';
   @State postStatus: string = '';
+  @Consume('NavPathStack') pageStack: NavPathStack;
 
   build() {
-    RelativeContainer() {
-      Column() {
-        Text(this.postStatus)
-          .fontColor(Color.Black)
-          .fontSize(14)
-          .fontWeight(FontWeight.Bold)
-          .fontColor(Color.Red)
-          .width('100%')
-          .height('10%')
-          .textAlign(TextAlign.Center)
-          .align(Alignment.Center)
+    NavDestination() {
+      RelativeContainer() {
+        Column() {
+          Text(this.postStatus)
+            .fontColor(Color.Black)
+            .fontSize(14)
+            .fontWeight(FontWeight.Bold)
+            .fontColor(Color.Red)
+            .width('100%')
+            .height('10%')
+            .textAlign(TextAlign.Center)
+            .align(Alignment.Center)
 
-        this.getText('User Id', val => this.userId = val);
-        this.getText('Author Id', val => this.userId = val);
-        this.getText('Description', val => this.userId = val);
+          this.getText('User Id', val => this.userId = val);
+          this.getText('Author Id', val => this.userId = val);
+          this.getText('Description', val => this.userId = val);
 
-        Button('Add Book')
-          .fontSize(14)
-          .height('35vp')
-          .width('55%')
-          .onClick(() => this.postTransferSyn())
-          .margin({ top: '5vp' })
+          Button('Add Book')
+            .fontSize(14)
+            .height('35vp')
+            .width('55%')
+            .onClick(() => this.postTransferSyn())
+            .margin({ top: '5vp' })
+        }
+        .alignRules({
+          center: { anchor: '__container__', align: VerticalAlign.Center },
+          middle: { anchor: '__container__', align: HorizontalAlign.Center }
+        })
       }
-      .alignRules({
-        center: { anchor: '__container__', align: VerticalAlign.Center },
-        middle: { anchor: '__container__', align: HorizontalAlign.Center }
-      })
+      .width('100%')
+      .backgroundColor('#fff8f1e3')
     }
-    .width('100%')
-    .backgroundColor('#fff8f1e3')
+    .hideTitleBar(true)
+    .hideBackButton(true)
   }
 
   @Builder
@@ -65,10 +69,7 @@ struct PostRequestContent {
   }
 
   private postTransferSyn = async () => {
-
-    const postURL = 'https://' + getContext(this)
-      .resourceManager
-      .getStringSync($r('app.string.serviceurl').id);
+    const postURL = 'https://' + $r('app.string.service_url');
 
     const postContent: rcp.RequestContent = {
       fields: {

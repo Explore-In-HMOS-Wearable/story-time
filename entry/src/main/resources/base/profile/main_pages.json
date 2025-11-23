@@ -1,8 +1,5 @@
 {
   "src": [
-    "pages/Index",
-    "pages/PostRequestContent",
-    "pages/DeleteRequestContent",
-    "pages/GetRequestContent"
+    "pages/Index"
   ]
 }
